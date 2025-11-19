@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific - shared data and models
+shared/data/collected/[0-9]/
+shared/data/synthetic/[0-9]/
+shared/data/synthetic/train/
+shared/data/synthetic/val/
+shared/data/synthetic/test/
+shared/data/composed/train/
+shared/data/composed/val/
+shared/data/composed/test/
+shared/models/run_*/
+shared/tests/*.json
+
+# (OLD)MNIST reference - ignore downloaded data and trained models
+(OLD)MNIST/data/
+(OLD)MNIST/model/
