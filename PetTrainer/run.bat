@@ -1,3 +1,3 @@
 @echo off
-python train.py
+python main.py
 pause

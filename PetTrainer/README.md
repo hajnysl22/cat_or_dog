@@ -3,13 +3,23 @@
 Trains a Convolutional Neural Network (CNN) to distinguish between Cats and Dogs.
 
 ## Features
-- RGB Image support (64x64).
-- Binary classification (Cat vs Dog).
-- Training logs and model saving.
+- **GUI Configuration:** Set Epochs, Batch Size, Learning Rate, Dropout, Step Size, LR Gamma, and Seed.
+- **RGB Image support:** Handles 64x64 color images.
+- **Binary classification:** Cat vs Dog.
+- **Training logs:** Real-time feedback in the GUI and saved model checkpoints.
 
 ## Usage
 1.  Ensure data is composed in `../shared/data/composed` (run `PetComposer`).
-2.  Train the model:
+2.  Run the application:
     ```bash
-    python train.py --epochs 10
+    python main.py
     ```
+    *(Or simply click `run.bat`)*
+
+3.  Configure hyperparameters and click **"Start Training"**.
+
+### CLI Usage (Advanced)
+You can still run the training script directly from the command line:
+```bash
+python train.py --epochs 20 --batch_size 32
+```
