@@ -9,11 +9,10 @@ GUI application for collecting cat and dog images. It supports both manual impor
 - **Output:** `shared/data/raw/cat`, `shared/data/raw/dog`
 
 ### 2. PetComposer
-Processes the raw images:
-- Resizes to 64x64 pixels.
-- Converts to RGB.
-- Splits into Training (80%) and Test (20%) sets.
-- **Output:** `shared/data/composed/train`, `shared/data/composed/test`
+GUI application for dataset preparation.
+- **Features:** Interactively adjust **Train**, **Validation**, and **Test** split ratios via sliders.
+- **Normalization:** Resizes images to 64x64 pixels and converts to RGB.
+- **Output:** `shared/data/composed/train`, `shared/data/composed/val`, `shared/data/composed/test`
 
 ### 3. PetTrainer
 Trains a Convolutional Neural Network (CNN) on the processed data.
@@ -33,11 +32,12 @@ Evaluates the trained model on the test set.
     run.bat
     ```
     *Use the GUI to manually import images or start the automatic download.*
-2.  **Process Data:**
+2.  **Process Data (using GUI):**
     ```bash
     cd ../PetComposer
     run.bat
     ```
+    *Use the sliders to configure the Train/Validation/Test splits (must sum to 100%) and click "Process Dataset".*
 3.  **Train Model:**
     ```bash
     cd ../PetTrainer

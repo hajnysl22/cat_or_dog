@@ -28,12 +28,11 @@ The project follows a strict "separation of concerns" pipeline. Modules do not i
 
 ### 2. PetComposer
 *   **Path:** `PetComposer/`
-*   **Entry Point:** `main.py`
+*   **Entry Point:** `main.py` (GUI Application)
 *   **Function:** Standardizes data.
-    *   Resizes images to **64x64**.
-    *   Converts to **RGB**.
-    *   Splits into **Train (80%)** and **Test (20%)**.
-*   **Output:** `shared/data/composed/{train,test}/{cat,dog}/`
+    *   **Interactive Split:** GUI sliders to set **Train**, **Validation**, and **Test** ratios (must sum to 100%).
+    *   **Normalization:** Resizes images to **64x64** and converts to **RGB**.
+*   **Output:** `shared/data/composed/{train,val,test}/{cat,dog}/`
 
 ### 3. PetTrainer
 *   **Path:** `PetTrainer/`
@@ -60,6 +59,7 @@ If you are an agent picking up this task, here is what you need to know:
 3.  **Recent Changes:**
     *   Refactored from digit recognition to pet classification.
     *   Added GUI to `PetCollector`.
+    *   Added GUI to `PetComposer` for dynamic dataset splitting (Train/Val/Test).
     *   Implemented file renaming logic in `PetCollector` to handle incremental additions.
 4.  **Potential Next Steps:**
     *   **Data Augmentation:** The current trainer uses raw images. Adding rotation/flip transforms in `PetTrainer` would improve robustness.

@@ -17,9 +17,9 @@ We retained the **"Separation of Concerns"** principle from the original project
 
 ### 2. Data Preparation (`PetComposer`)
 *   **Original:** Merged BMP files of drawn digits.
-*   **New Approach:** A standardization pipeline.
+*   **New Approach:** A standardization pipeline with GUI control.
     *   **Normalization:** All images are resized to **64x64 pixels** and converted to **RGB**. This uniformity is crucial for the CNN input.
-    *   **Splitting:** Automatically partitions data into Training (80%) and Testing (20%) sets to ensure rigorous evaluation.
+    *   **Interactive Splitting:** Users can dynamically configure the ratio of **Training**, **Validation**, and **Testing** sets via a GUI, ensuring flexible dataset management.
 
 ### 3. Model Training (`PetTrainer`)
 *   **Original:** A simple CNN for 28x28/32x32 grayscale images (1 channel, 10 classes).
