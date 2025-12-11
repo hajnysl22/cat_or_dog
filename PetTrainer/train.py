@@ -248,14 +248,25 @@ def main() -> None:
     parser.add_argument("--output_dir", type=Path, default=DEFAULT_MODELS_DIR)
     parser.add_argument("--epochs", type=int, default=None)
     parser.add_argument("--batch_size", type=int, default=None)
+    parser.add_argument("--learning_rate", type=float, default=None)
+    parser.add_argument("--dropout", type=float, default=None)
+    parser.add_argument("--step_size", type=int, default=None)
+    parser.add_argument("--lr_gamma", type=float, default=None)
+    parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--use_cpu", action="store_true")
     args = parser.parse_args()
 
     hp = HyperParams()
     if args.epochs: hp.epochs = args.epochs
     if args.batch_size: hp.batch_size = args.batch_size
+    if args.learning_rate: hp.learning_rate = args.learning_rate
+    if args.dropout: hp.dropout = args.dropout
+    if args.step_size: hp.step_size = args.step_size
+    if args.lr_gamma: hp.lr_gamma = args.lr_gamma
+    if args.seed: hp.seed = args.seed
 
     set_seed(hp.seed)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu" if args.use_cpu or not torch.cuda.is_available() else "cuda")
     print(f"Using device: {device}")
 
     loaders = create_loaders_from_subdirectories(args.data_dir, hp.batch_size)
