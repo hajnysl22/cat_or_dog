@@ -1,12 +1,12 @@
 """
-DigitTester Visualizer - GUI vizualizace výsledků testování
+PetTester Visualizer - GUI for visualizing test results
 
-Zobrazuje výsledky z JSON souboru vytvořeného DigitTesterem:
-- Overall metrics s barevným indikátorem
-- Confusion matrix heatmap (interaktivní)
+Displays results from a JSON file created by PetTester:
+- Overall metrics with color indicator
+- Confusion matrix heatmap (interactive)
 - Per-class bar charts
 - Top confusions list
-- Export grafů
+- Export charts
 """
 
 from __future__ import annotations
@@ -41,16 +41,16 @@ BUTTON_BORDER = "#5a5d60"
 
 
 def load_results(results_path: Path) -> Dict:
-    """Načte JSON s výsledky testování."""
+    """Loads JSON with test results."""
     if not results_path.exists():
-        raise FileNotFoundError(f"Soubor s výsledky nenalezen: {results_path}")
+        raise FileNotFoundError(f"Results file not found: {results_path}")
 
     with results_path.open("r", encoding="utf-8") as f:
         return json.load(f)
 
 
 def get_accuracy_color(accuracy: float) -> str:
-    """Vrátí barvu podle úrovně accuracy."""
+    """Returns color based on accuracy level."""
     if accuracy >= 0.90:
         return "#4CAF50"  # Green
     elif accuracy >= 0.70:
@@ -65,7 +65,7 @@ class ResultsVisualizer:
         self.results = load_results(results_path)
 
         self.window = tk.Tk()
-        self.window.title("DigitTester - Výsledky testování")
+        self.window.title("PetTester - Test Results")
         self.window.geometry("1400x900")
         self.window.config(bg=BG_COLOR, padx=15, pady=15)
 
@@ -82,11 +82,11 @@ class ResultsVisualizer:
 
         self._build_ui()
 
-        # Centrovat okno po postavení GUI
+        # Center window after building GUI
         self.center_window()
 
     def _build_ui(self):
-        """Postaví celé GUI."""
+        """Builds the entire GUI."""
         # Header
         self._create_header()
 
@@ -112,13 +112,13 @@ class ResultsVisualizer:
         self._create_export_button()
 
     def _create_header(self):
-        """Vytvoří hlavičku s info o modelu."""
+        """Creates header with model info."""
         header_frame = tk.Frame(self.window, bg=BG_COLOR)
         header_frame.pack(fill=tk.X, pady=(0, 10))
 
         title = tk.Label(
             header_frame,
-            text="📊 Výsledky testování modelu",
+            text="📊 Model Test Results",
             font=("Arial", 20, "bold"),
             bg=BG_COLOR,
             fg=FG_COLOR,
@@ -130,7 +130,7 @@ class ResultsVisualizer:
         data_dir = Path(self.results["data_dir"]).name
         timestamp = self.results["timestamp"]
 
-        info_text = f"Model: {model_dir}  |  Data: {data_dir}  |  Čas: {timestamp}"
+        info_text = f"Model: {model_dir}  |  Data: {data_dir}  |  Time: {timestamp}"
         info_label = tk.Label(
             header_frame,
             text=info_text,
@@ -141,7 +141,7 @@ class ResultsVisualizer:
         info_label.pack(anchor="w", pady=(5, 0))
 
     def _create_overall_panel(self):
-        """Vytvoří panel s celkovými metrikami."""
+        """Creates panel with overall metrics."""
         panel = tk.Frame(self.window, bg=BUTTON_BG, relief="flat", bd=0)
         panel.pack(fill=tk.X, pady=(0, 15))
 
@@ -177,7 +177,7 @@ class ResultsVisualizer:
         # Total samples
         total_label = tk.Label(
             inner,
-            text=f"Vzorků: {total}",
+            text=f"Samples: {total}",
             font=("Arial", 14),
             bg=BUTTON_BG,
             fg=FG_COLOR,
@@ -185,10 +185,10 @@ class ResultsVisualizer:
         total_label.pack(side=tk.LEFT, padx=20)
 
     def _create_confusion_heatmap(self, parent):
-        """Vytvoří confusion matrix jako heatmap."""
+        """Creates confusion matrix as heatmap."""
         label = tk.Label(
             parent,
-            text="Confusion Matrix (klikněte na buňku pro příklady)",
+            text="Confusion Matrix (click cell for examples)",
             font=("Arial", 13, "bold"),
             bg=BG_COLOR,
             fg=FG_COLOR,
@@ -218,8 +218,8 @@ class ResultsVisualizer:
         self.confusion_ax.set_yticklabels(range(num_classes), color=FG_COLOR)
 
         # Labels
-        self.confusion_ax.set_xlabel("Predikce", color=FG_COLOR, fontsize=11)
-        self.confusion_ax.set_ylabel("Skutečnost", color=FG_COLOR, fontsize=11)
+        self.confusion_ax.set_xlabel("Prediction", color=FG_COLOR, fontsize=11)
+        self.confusion_ax.set_ylabel("True Label", color=FG_COLOR, fontsize=11)
 
         # Add text annotations
         for i in range(num_classes):
@@ -239,7 +239,7 @@ class ResultsVisualizer:
         self.confusion_canvas.mpl_connect('button_press_event', self._on_confusion_click)
 
     def _create_perclass_charts(self, parent):
-        """Vytvoří bar charts pro per-class metriky."""
+        """Creates bar charts for per-class metrics."""
         label = tk.Label(
             parent,
             text="Per-Class Metrics",
@@ -249,7 +249,11 @@ class ResultsVisualizer:
         )
         label.pack(anchor="w", pady=(0, 5))
 
-        metrics = self.results["per_class_metrics"]
+        metrics = self.results.get("per_class_metrics", {})
+        if not metrics:
+             tk.Label(parent, text="No per-class metrics available", bg=BG_COLOR, fg=FG_COLOR).pack()
+             return
+
         classes = sorted([int(k) for k in metrics.keys()])
 
         accuracies = [metrics[str(c)]["accuracy"] for c in classes]
@@ -270,8 +274,8 @@ class ResultsVisualizer:
         self.metrics_ax.bar(x + 0.5*width, recalls, width, label='Recall', color='#FF9800')
         self.metrics_ax.bar(x + 1.5*width, f1_scores, width, label='F1-Score', color='#9C27B0')
 
-        self.metrics_ax.set_xlabel("Třída", color=FG_COLOR, fontsize=10)
-        self.metrics_ax.set_ylabel("Hodnota", color=FG_COLOR, fontsize=10)
+        self.metrics_ax.set_xlabel("Class", color=FG_COLOR, fontsize=10)
+        self.metrics_ax.set_ylabel("Value", color=FG_COLOR, fontsize=10)
         self.metrics_ax.set_xticks(x)
         self.metrics_ax.set_xticklabels(classes, color=FG_COLOR)
         self.metrics_ax.tick_params(colors=FG_COLOR)
@@ -292,10 +296,10 @@ class ResultsVisualizer:
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True, pady=(0, 10))
 
     def _create_confusions_list(self, parent):
-        """Vytvoří seznam nejčastějších záměn."""
+        """Creates a list of most frequent confusions."""
         label = tk.Label(
             parent,
-            text="Nejčastější chyby",
+            text="Most Frequent Errors",
             font=("Arial", 13, "bold"),
             bg=BG_COLOR,
             fg=FG_COLOR,
@@ -321,7 +325,7 @@ class ResultsVisualizer:
         if not top_confusions:
             no_errors = tk.Label(
                 list_frame,
-                text="🎉 Žádné chyby!",
+                text="🎉 No Errors!",
                 font=("Arial", 12),
                 bg=BUTTON_BG,
                 fg="#4CAF50",
@@ -329,7 +333,7 @@ class ResultsVisualizer:
             no_errors.pack(padx=15, pady=15)
         else:
             for idx, (true_cls, pred_cls, count) in enumerate(top_confusions, 1):
-                text = f"{idx}. Třída {true_cls} → {pred_cls}: {count}× chybně"
+                text = f"{idx}. Class {true_cls} → {pred_cls}: {count}× wrong"
                 lbl = tk.Label(
                     list_frame,
                     text=text,
@@ -341,13 +345,13 @@ class ResultsVisualizer:
                 lbl.pack(fill=tk.X, padx=15, pady=3)
 
     def _create_export_button(self):
-        """Vytvoří tlačítko pro export grafů."""
+        """Creates button to export charts."""
         btn_frame = tk.Frame(self.window, bg=BG_COLOR)
         btn_frame.pack(pady=(10, 0))
 
         export_btn = tk.Button(
             btn_frame,
-            text="💾 Exportovat grafy",
+            text="💾 Export Charts",
             command=self._export_charts,
             width=20,
             bg=BUTTON_BG,
@@ -363,7 +367,7 @@ class ResultsVisualizer:
         export_btn.pack()
 
     def _on_confusion_click(self, event):
-        """Handler pro kliknutí na confusion matrix."""
+        """Handler for clicking on confusion matrix."""
         if event.inaxes != self.confusion_ax:
             return
 
@@ -380,8 +384,8 @@ class ResultsVisualizer:
 
         if count == 0:
             messagebox.showinfo(
-                "Žádné případy",
-                f"Žádné vzorky nebyly klasifikovány jako:\nSkutečnost: {row}, Predikce: {col}"
+                "No Cases",
+                f"No samples were classified as:\nTrue: {row}, Predicted: {col}"
             )
             return
 
@@ -389,7 +393,7 @@ class ResultsVisualizer:
         self._show_confusion_examples(row, col, count)
 
     def _show_confusion_examples(self, true_class: int, pred_class: int, total_count: int):
-        """Zobrazí náhodné příklady konkrétní chyby."""
+        """Shows random examples of specific confusion."""
         # Find all predictions matching this confusion
         predictions = self.results.get("predictions", [])
 
@@ -400,9 +404,9 @@ class ResultsVisualizer:
 
         if not matching:
             messagebox.showwarning(
-                "Žádná data",
-                f"Predictions data nejsou dostupná.\n"
-                f"(Možná používáte starší verzi výsledků)"
+                "No Data",
+                f"Prediction data not available.\n"
+                f"(You might be using older results version)"
             )
             return
 
@@ -412,16 +416,16 @@ class ResultsVisualizer:
 
         # Create window
         ex_window = tk.Toplevel(self.window)
-        ex_window.title(f"Příklady: {true_class} → {pred_class}")
+        ex_window.title(f"Examples: {true_class} → {pred_class}")
         ex_window.config(bg=BG_COLOR, padx=20, pady=20)
         ex_window.transient(self.window)
 
         # Header
         if true_class == pred_class:
-            header_text = f"✓ Správně klasifikováno jako {true_class} ({total_count}× celkem)"
+            header_text = f"✓ Correctly classified as {true_class} ({total_count}× total)"
             header_color = "#4CAF50"
         else:
-            header_text = f"✗ Skutečnost: {true_class}, Model řekl: {pred_class} ({total_count}× celkem)"
+            header_text = f"✗ True: {true_class}, Model said: {pred_class} ({total_count}× total)"
             header_color = "#F44336"
 
         header = tk.Label(
@@ -471,7 +475,7 @@ class ResultsVisualizer:
                 )
                 error_canvas.create_text(
                     48, 48,
-                    text="Chyba\nnačtení",
+                    text="Error\nloading",
                     fill=FG_COLOR,
                     font=("Arial", 10),
                 )
@@ -480,7 +484,7 @@ class ResultsVisualizer:
         # Close button
         close_btn = tk.Button(
             ex_window,
-            text="Zavřít",
+            text="Close",
             command=ex_window.destroy,
             width=12,
             bg=BUTTON_BG,
@@ -493,9 +497,9 @@ class ResultsVisualizer:
         close_btn.pack(pady=(15, 0))
 
     def _export_charts(self):
-        """Exportuje grafy jako PNG soubory."""
+        """Exports charts as PNG files."""
         output_dir = filedialog.askdirectory(
-            title="Vyberte složku pro export grafů",
+            title="Select directory to export charts",
             initialdir=self.results_path.parent,
         )
 
@@ -527,17 +531,17 @@ class ResultsVisualizer:
             )
 
             messagebox.showinfo(
-                "Export dokončen",
-                f"Grafy byly exportovány do:\n{output_path}\n\n"
+                "Export Complete",
+                f"Charts exported to:\n{output_path}\n\n"
                 f"- {confusion_path.name}\n"
                 f"- {metrics_path.name}"
             )
 
         except Exception as e:
-            messagebox.showerror("Chyba exportu", f"Nepodařilo se exportovat grafy:\n{e}")
+            messagebox.showerror("Export Error", f"Failed to export charts:\n{e}")
 
     def _on_closing(self):
-        """Handler pro zavření okna - uklidí všechny resources."""
+        """Handler for window closing - cleans up resources."""
         try:
             # Close all matplotlib figures
             plt.close('all')
@@ -549,25 +553,25 @@ class ResultsVisualizer:
             pass
 
     def center_window(self):
-        """Centruje okno na obrazovku."""
-        # Ujistit se, že má okno správnou velikost
+        """Centers window on screen."""
+        # Ensure window has correct size
         self.window.update_idletasks()
 
-        # Získat rozměry obrazovky a okna
+        # Get screen and window dimensions
         screen_width = self.window.winfo_screenwidth()
         screen_height = self.window.winfo_screenheight()
         window_width = self.window.winfo_width()
         window_height = self.window.winfo_height()
 
-        # Vypočítat centrální pozici
+        # Calculate central position
         x = max(0, (screen_width - window_width) // 2)
         y = max(0, (screen_height - window_height) // 2)
 
-        # Nastavit pozici
+        # Set position
         self.window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
     def show(self):
-        """Zobrazí okno."""
+        """Shows the window."""
         import sys
         self.window.mainloop()
         # Clean up matplotlib to ensure all threads are closed
@@ -578,15 +582,15 @@ class ResultsVisualizer:
 
 
 def main():
-    """Standalone spuštění vizualizace."""
+    """Standalone visualization launch."""
     import argparse
 
-    parser = argparse.ArgumentParser(description="Vizualizace výsledků z DigitTester")
+    parser = argparse.ArgumentParser(description="Visualize results from PetTester")
     parser.add_argument(
         "--results",
         type=Path,
         default=None,
-        help="Cesta k JSON souboru s výsledky",
+        help="Path to JSON results file",
     )
 
     args = parser.parse_args()
@@ -595,11 +599,11 @@ def main():
         # Find latest results file
         results_files = sorted(Path(".").glob("test_results_*.json"), reverse=True)
         if not results_files:
-            print("Chyba: Nenalezen žádný soubor s výsledky.")
-            print("Spusťte: python visualize.py --results <cesta_k_JSON>")
+            print("Error: No results file found.")
+            print("Run: python visualize.py --results <path_to_JSON>")
             return
         args.results = results_files[0]
-        print(f"Načítám nejnovější výsledky: {args.results}")
+        print(f"Loading latest results: {args.results}")
 
     viz = ResultsVisualizer(args.results)
     viz.show()

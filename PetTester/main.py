@@ -24,6 +24,8 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from tqdm.auto import tqdm
 
+from visualize import ResultsVisualizer
+
 
 class SimpleCNN(nn.Module):
     """CNN for 64x64 RGB images."""
@@ -190,6 +192,32 @@ def evaluate_with_confusion(
     return average_loss, accuracy, confusion, predictions
 
 
+def calculate_per_class_metrics(confusion: np.ndarray, idx_to_class: Dict[int, str]) -> Dict:
+    """Calculates precision, recall, f1 for each class."""
+    metrics = {}
+    total_samples = confusion.sum()
+    
+    for i in range(len(idx_to_class)):
+        tp = confusion[i, i]
+        fp = confusion[:, i].sum() - tp
+        fn = confusion[i, :].sum() - tp
+        tn = total_samples - (tp + fp + fn)
+        
+        accuracy = (tp + tn) / total_samples if total_samples > 0 else 0
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+        f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+        
+        metrics[str(i)] = {
+            "class_name": idx_to_class.get(i, str(i)),
+            "accuracy": float(accuracy),
+            "precision": float(precision),
+            "recall": float(recall),
+            "f1_score": float(f1_score)
+        }
+    return metrics
+
+
 def save_results(results: Dict, output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as f:
@@ -238,19 +266,43 @@ def main() -> None:
     if args.model_dir is None:
         models_dir = Path("..") / "shared" / "models"
         if not models_dir.exists():
-            print("No models found.")
+            print("No models found in shared/models.")
             return
+            
         runs = sorted([d for d in models_dir.iterdir() if d.is_dir() and d.name.startswith("run_")], reverse=True)
         if not runs:
-            print("No runs found.")
+            print("No 'run_*' directories found in shared/models.")
             return
-        args.model_dir = runs[0]
-        print(f"Using latest model: {args.model_dir}")
+
+        print("\nAvailable Models:")
+        for idx, run in enumerate(runs):
+            print(f"[{idx}] {run.name}")
+            
+        try:
+            choice = input(f"\nSelect model [0-{len(runs)-1}] (default 0): ").strip()
+            if not choice:
+                choice_idx = 0
+            else:
+                choice_idx = int(choice)
+                if not (0 <= choice_idx < len(runs)):
+                    print("Invalid index. Using default (0).")
+                    choice_idx = 0
+        except ValueError:
+            print("Invalid input. Using default (0).")
+            choice_idx = 0
+            
+        args.model_dir = runs[choice_idx]
+        print(f"Selected: {args.model_dir}")
 
     device = torch.device("cpu" if args.use_cpu or not torch.cuda.is_available() else "cuda")
     print(f"Device: {device}")
 
-    model, config, class_map = load_model(args.model_dir, device)
+    try:
+        model, config, class_map = load_model(args.model_dir, device)
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        return
+
     idx_to_class = {v: k for k, v in class_map.items()}
     num_classes = len(class_map)
 
@@ -266,6 +318,8 @@ def main() -> None:
     avg_loss, accuracy, confusion, predictions = evaluate_with_confusion(
         model, loader, nn.CrossEntropyLoss(), device, num_classes
     )
+    
+    per_class_metrics = calculate_per_class_metrics(confusion, idx_to_class)
 
     results = {
         "timestamp": datetime.now().strftime("%Y%m%d_%H%M%S"),
@@ -275,15 +329,29 @@ def main() -> None:
         "average_loss": float(avg_loss),
         "confusion_matrix": confusion.tolist(),
         "predictions": predictions,
-        "class_map": class_map
+        "class_map": class_map,
+        "total_samples": len(dataset),
+        "per_class_metrics": per_class_metrics
     }
 
     print_results(results, idx_to_class)
 
     if args.output:
-        save_results(results, args.output)
+        out_path = args.output
     else:
-        save_results(results, Path("..") / "shared" / "tests" / f"results_{results['timestamp']}.json")
+        out_path = Path("..") / "shared" / "tests" / f"results_{results['timestamp']}.json"
+    
+    save_results(results, out_path)
+    
+    # Visualization prompt
+    try:
+        viz_choice = input("\nDo you want to visualize the results? [y/N]: ").strip().lower()
+        if viz_choice == 'y':
+            print("Launching visualizer...")
+            viz = ResultsVisualizer(out_path)
+            viz.show()
+    except Exception as e:
+        print(f"Error launching visualizer: {e}")
 
 if __name__ == "__main__":
     main()
