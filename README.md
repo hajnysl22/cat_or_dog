@@ -5,7 +5,7 @@ This project contains a set of tools for collecting, processing, training, and t
 ## Modules
 
 ### 1. PetCollector
-Downloads raw images of cats and dogs from public APIs (`TheCatAPI`, `DogCEO`).
+GUI application for collecting cat and dog images. It supports both manual import of images from your local machine and automatic downloading of images from public APIs (`TheCatAPI`, `DogCEO`). Downloaded images are named sequentially (e.g., `cat_000.jpg`, `cat_001.jpg`).
 - **Output:** `shared/data/raw/cat`, `shared/data/raw/dog`
 
 ### 2. PetComposer
@@ -27,11 +27,12 @@ Evaluates the trained model on the test set.
 
 ## Workflow
 
-1.  **Collect Data:**
+1.  **Collect Data (using GUI):**
     ```bash
     cd PetCollector
     run.bat
     ```
+    *Use the GUI to manually import images or start the automatic download.*
 2.  **Process Data:**
     ```bash
     cd ../PetComposer
