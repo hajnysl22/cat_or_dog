@@ -15,8 +15,8 @@ GUI application for dataset preparation.
 - **Output:** `shared/data/composed/train`, `shared/data/composed/val`, `shared/data/composed/test`
 
 ### 3. PetTrainer
-Trains a Convolutional Neural Network (CNN) on the processed data.
-- **Input:** `shared/data/composed/train`
+GUI application for training the Convolutional Neural Network (CNN).
+- **Features:** GUI with sliders to tune hyperparameters (Epochs, Batch Size, Learning Rate, Dropout, Step Size, LR Gamma, Seed).
 - **Output:** Trained model in `shared/models/run_TIMESTAMP/pet_cnn.pt`
 
 ### 4. PetTester
@@ -38,11 +38,12 @@ Evaluates the trained model on the test set.
     run.bat
     ```
     *Use the sliders to configure the Train/Validation/Test splits (must sum to 100%) and click "Process Dataset".*
-3.  **Train Model:**
+3.  **Train Model (using GUI):**
     ```bash
     cd ../PetTrainer
     run.bat
     ```
+    *Adjust hyperparameters using sliders and click "Start Training".*
 4.  **Test Model:**
     ```bash
     cd ../PetTester

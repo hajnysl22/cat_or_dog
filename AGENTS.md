@@ -36,8 +36,9 @@ The project follows a strict "separation of concerns" pipeline. Modules do not i
 
 ### 3. PetTrainer
 *   **Path:** `PetTrainer/`
-*   **Entry Point:** `train.py`
+*   **Entry Point:** `main.py` (GUI Application)
 *   **Function:** Trains the model.
+    *   **GUI Configuration:** Sliders for Epochs, Batch Size, LR, Dropout, etc.
     *   **Model:** `SimpleCNN` (Custom architecture: 4 Conv blocks -> Flatten -> Linear).
     *   **Input:** `(3, 64, 64)` tensors.
     *   **Classes:** 2 (Cat=0, Dog=1).
@@ -60,6 +61,7 @@ If you are an agent picking up this task, here is what you need to know:
     *   Refactored from digit recognition to pet classification.
     *   Added GUI to `PetCollector`.
     *   Added GUI to `PetComposer` for dynamic dataset splitting (Train/Val/Test).
+    *   Added GUI to `PetTrainer` for advanced hyperparameter tuning via sliders.
     *   Implemented file renaming logic in `PetCollector` to handle incremental additions.
 4.  **Potential Next Steps:**
     *   **Data Augmentation:** The current trainer uses raw images. Adding rotation/flip transforms in `PetTrainer` would improve robustness.
