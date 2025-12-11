@@ -22,8 +22,10 @@ GUI application for training the Convolutional Neural Network (CNN).
 
 ### 4. PetTester
 Evaluates the trained model on the test set.
+- **Features:** Interactive model selection, JSON results storage.
+- **Visualization:** GUI for Confusion Matrix, Metrics, and Error Analysis.
 - **Input:** `shared/models/...`, `shared/data/composed/test`
-- **Output:** Confusion matrix and accuracy metrics.
+- **Output:** `shared/tests/results_TIMESTAMP.json`
 
 ## Workflow
 
@@ -50,6 +52,7 @@ Evaluates the trained model on the test set.
     cd ../PetTester
     run.bat
     ```
+    *Select a model from the list. After evaluation, you can choose to launch the visualizer to explore the results.*
 
 ## Requirements
 - Python 3.10+

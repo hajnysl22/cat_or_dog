@@ -47,11 +47,16 @@ The project follows a strict "separation of concerns" pipeline. Modules do not i
 
 ### 4. PetTester
 *   **Path:** `PetTester/`
-*   **Entry Point:** `main.py`
+*   **Entry Point:** `main.py` (CLI with Interactive Mode)
 *   **Function:** Evaluates the model.
-    *   Loads the latest model from `shared/models`.
-    *   Runs inference on `shared/data/composed/test`.
-    *   Generates `results.json` and a Confusion Matrix.
+    *   **Interactive Selection:** Lists available models and asks user to choose one.
+    *   **Evaluation:** Runs inference on `shared/data/composed/test`.
+    *   **Visualization:** Includes a GUI (`visualize.py`) to show:
+        *   Confusion Matrix (Heatmap).
+        *   Per-Class Metrics (Precision/Recall/F1).
+        *   Misclassified Examples.
+        *   Chart Export.
+    *   **Output:** `results.json` and optionally PNG charts.
 
 ## Context for Next Session
 If you are an agent picking up this task, here is what you need to know:
@@ -64,10 +69,11 @@ If you are an agent picking up this task, here is what you need to know:
     *   Added GUI to `PetComposer` for dynamic dataset splitting (Train/Val/Test).
     *   Added GUI to `PetTrainer` for advanced hyperparameter tuning via sliders.
     *   Implemented file renaming logic in `PetCollector` to handle incremental additions.
+    *   **Completed PetTester:** Added interactive model selection and a comprehensive GUI visualizer (`visualize.py`) for analyzing results.
 4.  **Potential Next Steps:**
     *   **Data Augmentation:** The current trainer uses raw images. Adding rotation/flip transforms in `PetTrainer` would improve robustness.
     *   **Model Improvement:** The `SimpleCNN` is basic. Consider Transfer Learning (ResNet/MobileNet) if accuracy needs a boost.
-    *   **UI Polish:** `PetTester` has a visualization script (`visualize.py`) inherited from the old project; ensure it's fully compatible with the 2-class output.
+    *   **Real-time Inference:** Create a simple app where users can drag & drop an image to get a live "Cat or Dog" prediction.
 
 ## Key Paths
 *   Raw Data: `shared/data/raw` (gitignored)

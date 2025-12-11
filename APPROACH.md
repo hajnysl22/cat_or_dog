@@ -32,9 +32,14 @@ We retained the **"Separation of Concerns"** principle from the original project
 
 ### 4. Evaluation (`PetTester`)
 *   **Original:** Multi-class confusion matrix for digits 0-9.
-*   **New Approach:** Binary classification metrics.
-    *   Visualizes the Confusion Matrix specifically for the two classes.
-    *   Calculates Precision, Recall, and F1-Score to handle potential class imbalances.
+*   **New Approach:** Comprehensive analysis suite.
+    *   **Interactive Workflow:** Automatically discovers trained models and allows the user to select one for evaluation, removing the need for manual path copying.
+    *   **Detailed Metrics:** Calculates Accuracy, Loss, Precision, Recall, and F1-Score for each class.
+    *   **GUI Visualizer:** A dedicated tool (`visualize.py`) to:
+        *   Display the Confusion Matrix as an interactive heatmap.
+        *   Show bar charts for per-class performance.
+        *   Provide visual examples of specific misclassifications (e.g., "Show me Dogs confused as Cats").
+        *   Export high-quality charts for reporting.
 
 ## Technical Decisions
 *   **Framework:** PyTorch was chosen for its flexibility in modifying tensor shapes and model layers.
