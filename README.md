@@ -17,6 +17,7 @@ GUI application for dataset preparation.
 ### 3. PetTrainer
 GUI application for training the Convolutional Neural Network (CNN).
 - **Features:** GUI with sliders to tune hyperparameters (Epochs, Batch Size, Learning Rate, Dropout, Step Size, LR Gamma, Seed).
+- **CLI Support:** Run `python train.py --help` to see available command-line arguments.
 - **Output:** Trained model in `shared/models/run_TIMESTAMP/pet_cnn.pt`
 
 ### 4. PetTester

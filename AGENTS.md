@@ -39,6 +39,7 @@ The project follows a strict "separation of concerns" pipeline. Modules do not i
 *   **Entry Point:** `main.py` (GUI Application)
 *   **Function:** Trains the model.
     *   **GUI Configuration:** Sliders for Epochs, Batch Size, LR, Dropout, etc.
+    *   **CLI Configuration:** Supports command-line arguments for headless training (e.g. `--learning_rate`, `--use_cpu`).
     *   **Model:** `SimpleCNN` (Custom architecture: 4 Conv blocks -> Flatten -> Linear).
     *   **Input:** `(3, 64, 64)` tensors.
     *   **Classes:** 2 (Cat=0, Dog=1).

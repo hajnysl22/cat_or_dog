@@ -25,6 +25,7 @@ We retained the **"Separation of Concerns"** principle from the original project
 *   **Original:** A simple CNN for 28x28/32x32 grayscale images (1 channel, 10 classes).
 *   **New Approach:** Adapted CNN architecture with extensive configuration.
     *   **GUI Configuration:** A user-friendly interface allows tuning of hyperparameters (Epochs, Batch Size, Learning Rate, Dropout, etc.) via sliders.
+    *   **CLI Support:** Enables headless training and automation via command-line arguments.
     *   **Input Layer:** Modified to accept **3 channels** (RGB).
     *   **Feature Extraction:** Deeper convolutional layers to capture complex features of animal fur and shapes compared to simple strokes of digits.
     *   **Output Layer:** Reduced to **2 neurons** (Cat, Dog) for binary classification.
